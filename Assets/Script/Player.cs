@@ -8,6 +8,9 @@ public class Player : MonoBehaviour
     public float speed = 2.0f;
     Animator animator;
     bool isWalk = false;
+    public bool isAttackCheck = false;
+    int hp = 2;
+    bool isStop = false;
 
     void Start()
     {
@@ -60,8 +63,16 @@ public class Player : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Mouse0))
         {
+            isAttackCheck = true;
             animator.SetTrigger("isAttack");
+            StartCoroutine("Wait");
+            isAttackCheck = false;
         }
+    }
+
+    IEnumerator Wait()
+    {
+        yield return new WaitForSeconds(0.5f);
     }
 
     void Rotation()
@@ -76,6 +87,21 @@ public class Player : MonoBehaviour
             Vector3 mousePoint = ray.GetPoint(rayLength);
 
             this.transform.LookAt(new Vector3(mousePoint.x, this.transform.position.y, mousePoint.z));
+        }
+    }
+
+    public void SetHp(int damage)
+    {
+        if(!isStop)
+        {
+            hp -= damage;
+            if(hp <= 0)
+            {
+                hp = 0;
+                Debug.Log("GameOver");
+                animator.SetTrigger("Death");
+                isStop = true;
+            }
         }
     }
 }

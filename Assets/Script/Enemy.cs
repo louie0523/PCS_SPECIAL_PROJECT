@@ -8,6 +8,9 @@ public class Enemy : MonoBehaviour
     NavMeshAgent navMeshAgent;
     Transform player;
     Animator animator;
+    public bool isAttackCheck = false;
+    int hp = 2;
+    bool isStop = false;
 
     void Start()
     {
@@ -24,9 +27,10 @@ public class Enemy : MonoBehaviour
             if (Vector3.Distance(this.transform.position, player.position) < navMeshAgent.stoppingDistance + 0.1f)
             {
                 navMeshAgent.isStopped = true;
-                animator.SetBool("isWalk", false);
                 StartCoroutine("Attack");
-            } else
+                animator.SetBool("isWalk", false);
+            }
+            else
             {
                 navMeshAgent.isStopped = false;
                 animator.SetBool("isWalk", true);
@@ -37,17 +41,35 @@ public class Enemy : MonoBehaviour
         this.transform.LookAt(player.position);
     }
 
-    IEnumerable Attack()
+    IEnumerator Attack()
     {
+        Debug.Log("Attack");
         yield return new WaitForSeconds(0.5f);
+        isAttackCheck = true;
         animator.SetTrigger("isAttack");
         yield return new WaitForSeconds(0.5f);
-        if(Vector3.Distance(this.transform.position, player.position) < navMeshAgent.stoppingDistance + 0.1f)
+        isAttackCheck = false;
+        if (Vector3.Distance(this.transform.position, player.position) < navMeshAgent.stoppingDistance + 0.1f)
         {
             StartCoroutine("Attack");
         } else
         {
             navMeshAgent.isStopped = false;
+        }
+    }
+
+    public void SetHp(int damage)
+    {
+        if (!isStop)
+        {
+            hp -= damage;
+            if (hp <= 0)
+            {
+                hp = 0;
+                Debug.Log("die");
+                animator.SetTrigger("Death");
+                isStop = true;
+            }
         }
     }
 }
