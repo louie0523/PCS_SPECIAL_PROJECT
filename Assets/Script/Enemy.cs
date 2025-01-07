@@ -43,7 +43,6 @@ public class Enemy : MonoBehaviour
 
     IEnumerator Attack()
     {
-        Debug.Log("Attack");
         yield return new WaitForSeconds(0.5f);
         isAttackCheck = true;
         animator.SetTrigger("isAttack");
