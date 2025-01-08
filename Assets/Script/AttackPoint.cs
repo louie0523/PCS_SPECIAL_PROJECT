@@ -13,8 +13,6 @@ public class AttackPoint : MonoBehaviour
         Enemy,
     }
     public Char Character;
-
-
     private void OnTriggerEnter(Collider other)
     {
         switch (Character)

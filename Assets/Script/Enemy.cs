@@ -22,38 +22,46 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if(!navMeshAgent.isStopped)
+        if(!isStop)
         {
-            if (Vector3.Distance(this.transform.position, player.position) < navMeshAgent.stoppingDistance + 0.1f)
+            if (!navMeshAgent.isStopped)
             {
-                navMeshAgent.isStopped = true;
-                StartCoroutine("Attack");
-                animator.SetBool("isWalk", false);
+                if (Vector3.Distance(this.transform.position, player.position) < navMeshAgent.stoppingDistance + 0.1f)
+                {
+                    navMeshAgent.isStopped = true;
+                    StartCoroutine("Attack");
+                    animator.SetBool("isWalk", false);
+                }
+                else
+                {
+                    navMeshAgent.isStopped = false;
+                    animator.SetBool("isWalk", true);
+                    navMeshAgent.destination = player.position;
+                }
             }
-            else
-            {
-                navMeshAgent.isStopped = false;
-                animator.SetBool("isWalk", true);
-                navMeshAgent.destination = player.position;
-            }
-        }
 
-        this.transform.LookAt(player.position);
+            this.transform.LookAt(player.position);
+        }
     }
 
     IEnumerator Attack()
     {
-        yield return new WaitForSeconds(0.5f);
-        isAttackCheck = true;
-        animator.SetTrigger("isAttack");
-        yield return new WaitForSeconds(0.5f);
-        isAttackCheck = false;
-        if (Vector3.Distance(this.transform.position, player.position) < navMeshAgent.stoppingDistance + 0.1f)
+        if(!isStop)
         {
-            StartCoroutine("Attack");
-        } else
-        {
-            navMeshAgent.isStopped = false;
+            yield return new WaitForSeconds(0.5f);
+            isAttackCheck = true;
+            animator.SetTrigger("isAttack");
+
+            yield return new WaitForSeconds(0.5f);
+            isAttackCheck = false;
+            if (Vector3.Distance(this.transform.position, player.position) < navMeshAgent.stoppingDistance + 0.1f)
+            {
+                StartCoroutine("Attack");
+            }
+            else
+            {
+                navMeshAgent.isStopped = false;
+            }
         }
     }
 
@@ -68,6 +76,7 @@ public class Enemy : MonoBehaviour
                 Debug.Log("die");
                 animator.SetTrigger("Death");
                 isStop = true;
+                navMeshAgent.isStopped = true;
             }
         }
     }

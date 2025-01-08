@@ -12,6 +12,9 @@ public class Player : MonoBehaviour
     int hp = 2;
     bool isStop = false;
 
+
+   
+
     void Start()
     {
         characterController = this.GetComponent<CharacterController>();
@@ -20,20 +23,23 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        Walk();
-        Attack();
-        Rotation();
+        if(!isStop)
+        {
+            Walk();
+            Attack();
+            Rotation();
+        }
     }
 
     void Walk()
     {
         isWalk = false;
-        if(Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W))
         {
             characterController.Move(this.transform.forward * Time.deltaTime * speed);
             isWalk = true;
         }
-        else if(Input.GetKey(KeyCode.S))
+        else if (Input.GetKey(KeyCode.S))
         {
             characterController.Move(-this.transform.forward * Time.deltaTime * speed);
             isWalk = true;
@@ -43,16 +49,16 @@ public class Player : MonoBehaviour
             characterController.Move(-this.transform.right * Time.deltaTime * speed);
             isWalk = true;
         }
-        else if(Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.D))
         {
             characterController.Move(this.transform.right * Time.deltaTime * speed);
             isWalk = true;
         }
 
-        if(isWalk)
+        if (isWalk)
         {
             animator.SetBool("isWalk", true);
-        } 
+        }
         else
         {
             animator.SetBool("isWalk", false);
@@ -65,14 +71,13 @@ public class Player : MonoBehaviour
         {
             isAttackCheck = true;
             animator.SetTrigger("isAttack");
-            StartCoroutine("Wait");
-            isAttackCheck = false;
+            Invoke("StopAttackCheck", 0.5f);
         }
     }
 
-    IEnumerator Wait()
+    void StopAttackCheck()
     {
-        yield return new WaitForSeconds(0.5f);
+        isAttackCheck = false;
     }
 
     void Rotation()
@@ -82,7 +87,7 @@ public class Player : MonoBehaviour
         Plane plane = new Plane(Vector3.up, Vector3.zero);
 
         float rayLength;
-        if(plane.Raycast(ray, out rayLength))
+        if (plane.Raycast(ray, out rayLength))
         {
             Vector3 mousePoint = ray.GetPoint(rayLength);
 
