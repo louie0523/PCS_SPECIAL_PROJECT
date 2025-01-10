@@ -12,6 +12,12 @@ public class Player : MonoBehaviour
     int hp = 2;
     bool isStop = false;
 
+    public GameObject PrefabBullet;
+    public Transform BulletPoint;
+    public float BulletDelay = 1.0f;
+    public float BulletTime = 0f;
+    bool isBullet = false;
+
 
    
 
@@ -67,12 +73,35 @@ public class Player : MonoBehaviour
 
     void Attack()
     {
-        if(Input.GetKeyDown(KeyCode.Mouse0))
+        if(isBullet)
+        {
+            BulletTime += Time.deltaTime;
+            if(BulletTime >= BulletDelay)
+            {
+                isBullet = false;
+                BulletTime = 0;
+            }
+        }
+        if(!isBullet)
+        {
+            if(Input.GetKey(KeyCode.Mouse0))
+            {
+                isBullet = true;
+                animator.SetTrigger("isGunAttack");
+                Invoke("SpawnBullet", 0.2f);
+            }
+        }
+        /**if(Input.GetKeyDown(KeyCode.Mouse0))
         {
             isAttackCheck = true;
             animator.SetTrigger("isAttack");
             Invoke("StopAttackCheck", 0.5f);
-        }
+        }**/
+    }
+
+    void SpawnBullet()
+    {
+        Instantiate(PrefabBullet, BulletPoint.position, this.transform.rotation);
     }
 
     void StopAttackCheck()

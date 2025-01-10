@@ -20,7 +20,7 @@ public class AttackPoint : MonoBehaviour
             case Char.Player:
                 if (other.CompareTag("Enemy"))
                 {
-                    if (player.isActiveAndEnabled)
+                    if (player.isAttackCheck)
                     {
                         Debug.Log(other.tag);
                         player.isAttackCheck = false;
@@ -31,7 +31,7 @@ public class AttackPoint : MonoBehaviour
             case Char.Enemy:
                 if(other.CompareTag("Player"))
                 {
-                    if(enemy.isActiveAndEnabled)
+                    if(enemy.isAttackCheck)
                     {
                         Debug.Log(other.tag);
                         enemy.isAttackCheck = false;
